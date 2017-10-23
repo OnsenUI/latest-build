@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Latest Onsen UI build</title>
+</head>
+<body>
+  Fetching latest Onsen UI build...
+
+  <script>
+    (function() {
+      var handleError = function(error) {
+        document.writeln('Could not fetch the latest build url. ');
+        document.writeln(error || '');
+        document.close();
+      };
+
+      var request = function(url, cb) {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+          if (this.readyState === 4) {
+            console.info(this);
+            if (this.status === 200) {
+              cb(JSON.parse(this.responseText));
+            } else {
+              handleError(this.statusText);
+            }
+          }
+        };
+        httpRequest.open('GET', url, true);
+        httpRequest.send();
+      };
+
+      request('https://circleci.com/api/v1.1/project/github/OnsenUI/OnsenUI/latest/artifacts?branch=master&filter=successful',
+        function(res) {
+          if (res[0] && res[0].url) {
+            document.writeln('Downloading... Click <a href="' + res[0].url + '">here</a> if it does not start automatically.');
+            document.close();
+            window.location = res[0].url;
+          } else {
+            handlerError();
+          }
+        }
+      );
+    }())
+  </script>
+</body>
+</html>
